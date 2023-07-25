@@ -10,3 +10,8 @@ Eventually, the app will have a basic front end that will have a chat room that 
 - [ ] Anyone can view and enter chat rooms.
 - [ ] Users logged in should be able to write new messages.
 - [ ] Implement Websockets to showcase live updates.
+
+## Dependencies
+
+- direnv: This will allow the app to load in env variables to the project.
+- docker-compose and docker: help build sub-resources needed to run the project (psql)
