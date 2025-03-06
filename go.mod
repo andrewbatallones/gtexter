@@ -1,6 +1,6 @@
 module github.com/andrewbatallones/gtexter
 
-go 1.20
+go 1.24
 
 require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
