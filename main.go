@@ -12,32 +12,23 @@ import (
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DB_URL"))
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-	}
-	defer conn.Close(context.Background())
-
-	var test string
-	err = conn.QueryRow(context.Background(), "SELECT 'test'").Scan(&test)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-	}
-
-	fmt.Printf("test database: %s\n", test)
+	test := "Testing"
 
 	t, _ := template.ParseFiles("app/views/index.html")
 	t.Execute(w, test)
 }
 
 func healthcheck(w http.ResponseWriter, r *http.Request) {
-	isGoodHealth := true
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprintf(w, "{\"healthcheck\": %v}", testDbConnection())
+}
 
+func testDbConnection() bool {
 	// Test connection
 	conn, err := pgx.Connect(context.Background(), os.Getenv("DB_URL"))
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		isGoodHealth = false
+		return false
 	}
 	defer conn.Close(context.Background())
 
@@ -45,11 +36,10 @@ func healthcheck(w http.ResponseWriter, r *http.Request) {
 	err = conn.QueryRow(context.Background(), "SELECT 'test'").Scan(&test)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
-		isGoodHealth = false
+		return false
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprintf(w, "{\"healthcheck\": %v}", isGoodHealth)
+	return true
 }
 
 func main() {
